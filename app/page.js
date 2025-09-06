@@ -34,7 +34,7 @@ const Page = () => {
             localStorage.setItem("jwt", token);
             localStorage.setItem("user", JSON.stringify(payload));
             window.history.replaceState({}, document.title, window.location.pathname);
-            router.push("/chat");
+            router.push("/");
         }
     }, [mounted, router]);
 
