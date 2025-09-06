@@ -1,3 +1,5 @@
-const CHATBOT_BACKEND_URL = "https://chatbot.iabdulghaffar.com";
+const ENVIRONMENT = 'development';
 
-export { CHATBOT_BACKEND_URL };
+const CHATBOT_BACKEND_URL = ENVIRONMENT === "DEV" ? "http://localhost:3009" : "https://chatbot.iabdulghaffar.com";
+
+export { CHATBOT_BACKEND_URL, ENVIRONMENT };
