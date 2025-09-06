@@ -12,4 +12,4 @@ COPY . .
 EXPOSE 3001
 
 # Build and run at container startup (env vars injected by docker-compose will be available here)
-CMD ["sh", "-c", "npm run build && npm run start -- -H 0.0.0.0 -p 3001"]
+CMD ["sh", "-c", "npm run build && npm run start -- -H 0.0.0.0 -p 3400"]
