@@ -167,7 +167,7 @@ const ChatSide = ({ setSessionStarted, setAccountSetup }) => {
                             <div className='flex h-full items-center gap-2'>
 
                                 {/* Show options */}
-                                <Link href="/chat/options" className='text-color-gray-400 rounded-full p-1'>
+                                <Link href="/options" className='text-color-gray-400 rounded-full p-1'>
                                     <MoreVertIcon />
                                 </Link>
                                 {/* Logout button */}
