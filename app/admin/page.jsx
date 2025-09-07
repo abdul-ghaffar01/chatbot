@@ -21,12 +21,12 @@ const page = () => {
 
 
     useEffect(() => {
-        const token = localStorage.getItem("adminToken"); // Or whatever key you're using
+        const token = localStorage.getItem("adminToken");
         if (!isTokenValid(token)) {
             console.log("Token is invalid or expired. Redirecting...");
             // e.g., logout or redirect
             localStorage.removeItem("adminToken");
-            router.push("/chat/adminlogin")
+            router.push("/adminlogin")
         } else {
             setLoggedIn(true)
         }

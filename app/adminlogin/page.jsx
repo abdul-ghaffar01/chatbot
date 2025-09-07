@@ -1,5 +1,6 @@
 "use client"
 import { isTokenValid } from '@/utils/checkAdminToken';
+import { CHATBOT_BACKEND_URL } from '@/utils/env';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react'
 
@@ -15,7 +16,7 @@ const page = () => {
     useEffect(() => {
         const token = localStorage.getItem("adminToken"); // Or whatever key you're using
         if (isTokenValid(token)) {
-            router.push("/chat/admin")
+            router.push("/admin")
         }
     }, []);
 
@@ -27,7 +28,7 @@ const page = () => {
         setMessage("");
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL}/adminlogin`, {
+            const res = await fetch(`${CHATBOT_BACKEND_URL}/adminlogin`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
@@ -38,7 +39,7 @@ const page = () => {
                 setMessage("✅ Login successful!");
                 // store token if returned
                 localStorage.setItem("adminToken", data.token);
-                router.push("/chat/admin")
+                router.push("/admin")
             } else {
                 setMessage(`❌ ${data.message || "Login failed"}`);
             }
