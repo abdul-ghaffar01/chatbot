@@ -1,22 +1,40 @@
+import useChatStore from "@/store/chatStore";
 
-// To send message
-const sendMessage = (messageText,
+const sendMessage = (
+    messageText,
     socketInstance,
     userId,
     setMessageText,
-    textareaRef, stopSendingMessage) => {
+    textareaRef,
+    stopSendingMessage
+) => {
     if (stopSendingMessage) return;
     if (!messageText.trim() || !socketInstance) return;
-    socketInstance.emit('sendMessage', {
+    
+    const newMessage = {
+        tempId: Date.now() + "-" + Math.random(),
         userId,
         to: "6884c115c3fd2ec85813625a",
         content: messageText,
         sender: "user",
-    });
+        sentAt: new Date().toISOString(),
+        status: "pending",
+    };
 
-    setMessageText('');
-    textareaRef.current.style.height = '24px';
-    textareaRef.current.focus();
+
+    // add to local state immediately
+    const { addMessage } = useChatStore.getState();
+    addMessage(newMessage);
+
+    // send to server
+    socketInstance.emit("sendMessage", newMessage);
+
+    // reset input
+    setMessageText("");
+    if (textareaRef?.current) {
+        textareaRef.current.style.height = "24px";
+        textareaRef.current.focus();
+    }
 };
 
 export default sendMessage;
