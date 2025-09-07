@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import useChatStore from "@/store/chatStore";
 import { Delete as DeleteIcon, Warning as WarningIcon } from "@mui/icons-material";
+import { CHATBOT_BACKEND_URL } from "@/utils/env";
 
 const DeleteChat = ({ setSelectedSection }) => {
     const { messages, setMessages } = useChatStore();
@@ -15,7 +16,7 @@ const DeleteChat = ({ setSelectedSection }) => {
         const fetchMessageCount = async () => {
             try {
                 const token = localStorage.getItem("jwt"); // ✅ JWT from localStorage
-                const res = await fetch(`${process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL}/msg-count`, {
+                const res = await fetch(`${CHATBOT_BACKEND_URL}/msg-count`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -40,8 +41,8 @@ const DeleteChat = ({ setSelectedSection }) => {
     const handleChatDelete = async () => {
         try {
             const token = localStorage.getItem("jwt"); // ✅ JWT token stored locally
-            console.log(`${process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL}/delete-chat`)
-            const res = await fetch(`${process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL}/delete-chat`, {
+            console.log(`${CHATBOT_BACKEND_URL}/delete-chat`)
+            const res = await fetch(`${CHATBOT_BACKEND_URL}/delete-chat`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

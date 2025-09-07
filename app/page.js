@@ -1,96 +1,104 @@
 "use client";
-import { useEffect, useState } from 'react';
-import ChatSide from '@/components/chatbot/ChatSide';
-import AccountSetup from '@/components/chatbot/AccountSetup';
-import GuestMode from '@/components/chatbot/GuestMode';
-import { connectSocketReadOnly } from '@/utils/socket';
-import Loader from '@/components/Loader';
-import { useRouter } from 'next/navigation';
-import decodeJWT from '@/utils/chatbot/decodeJwt';
-
+import { useEffect, useState } from "react";
+import ChatSide from "@/components/chatbot/ChatSide";
+import AccountSetup from "@/components/chatbot/AccountSetup";
+import GuestMode from "@/components/chatbot/GuestMode";
+import { connectSocketReadOnly } from "@/utils/socket";
+import Loader from "@/components/Loader";
+import { useRouter } from "next/navigation";
+import decodeJWT from "@/utils/chatbot/decodeJwt";
 
 const Page = () => {
-    const [mounted, setMounted] = useState(false); // ✅ Fix hydration mismatch
-    const [sessionStarted, setSessionStarted] = useState(false);
-    const [creatingAccount, setCreatingAccount] = useState(false);
-    const [loggingIn, setLoggingIn] = useState(false);
-    const [guestMode, setGuestMode] = useState(false);
-    const [accountSetup, setAccountSetup] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [onlineUsers, setOnlineUsers] = useState([]);
-    const router = useRouter();
+  const [mounted, setMounted] = useState(false); // ✅ Fix hydration mismatch
+  const [uiState, setUiState] = useState("loading"); 
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const router = useRouter();
 
-    useEffect(() => {
-        setMounted(true); // ✅ Only render UI after mount
-    }, []);
+  // Prevent SSR hydration issues
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-    useEffect(() => {
-        if (!mounted) return; // ✅ Prevent SSR issues
+  // Handle JWT from query param or localStorage
+  useEffect(() => {
+    if (!mounted) return;
 
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get("token");
-        if (token) {
-            const payload = decodeJWT(token)
-            localStorage.setItem("jwt", token);
-            localStorage.setItem("user", JSON.stringify(payload));
-            window.history.replaceState({}, document.title, window.location.pathname);
-            router.push("/");
-        }
-    }, [mounted, router]);
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
 
-    useEffect(() => {
-        if (!mounted) return;
-        const socket = connectSocketReadOnly();
-        if (socket) setLoading(false);
+    if (token) {
+      const payload = decodeJWT(token);
+      localStorage.setItem("jwt", token);
+      localStorage.setItem("user", JSON.stringify(payload));
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setUiState("sessionStarted");
+      router.push("/");
+      return;
+    }
 
-        socket.on('onlineUsers', (users) => {
-            if (!Array.isArray(users)) return setOnlineUsers([]);
-            setOnlineUsers(users);
-        });
+    const jwt = localStorage.getItem("jwt");
+    if (jwt && decodeJWT(jwt)) {
+      setUiState("sessionStarted");
+    } else {
+      setUiState("accountSetup");
+    }
+  }, [mounted, router]);
 
-        return () => socket.off('onlineUsers');
-    }, [mounted]);
+  // Connect to socket for online users
+  useEffect(() => {
+    if (!mounted) return;
 
-    useEffect(() => {
-        if (!mounted) return;
-        const jwt = localStorage.getItem('jwt');
-        if (jwt) {
-            const isValidJwt = decodeJWT(jwt)
-            if (!isValidJwt) {
-                setAccountSetup(true);
-            } else {
-                setSessionStarted(true);
-            }
-        } else
-            setAccountSetup(true);
-    }, [mounted]);
+    const socket = connectSocketReadOnly();
+    if (socket) setLoadingUsers(false);
 
-    if (!mounted) return null; // ✅ Skip SSR rendering entirely
+    socket.on("onlineUsers", (users) => {
+      if (!Array.isArray(users)) return setOnlineUsers([]);
+      setOnlineUsers(users);
+    });
 
-    return (
-        <div className='w-screen h-[100dvh] flex overflow-hidden'>
-            {loading && <Loader />}
-            {sessionStarted && <ChatSide setSessionStarted={setSessionStarted} setAccountSetup={setAccountSetup} />}
-            {accountSetup && <AccountSetup setCreatingAccount={setCreatingAccount} setLoggingIn={setLoggingIn} setGuestMode={setGuestMode} setAccountSetup={setAccountSetup} />}
-            {guestMode && <GuestMode setAccountSetup={setAccountSetup} setGuestMode={setGuestMode} setSessionStarted={setSessionStarted} />}
+    return () => socket.off("onlineUsers");
+  }, [mounted]);
 
-            {/* Sidebar */}
-            <div className='hidden md:block md:flex-[1] max-w-[400px] border-l border-color-gray-500 bg-gray-900 flex flex-col overflow-y-auto'>
-            
-                <div className='w-full h-fit overflow-y-auto p-2'>
-                    <h1 className='text-xl text-gray-400 mb-1 font-medium'>Online users</h1>
-                    {loading && <p>Loading online users...</p>}
-                    {!loading && onlineUsers.length === 0 && <p className='text-color-gray-400'>Nobody is online</p>}
-                    {onlineUsers.map((user, index) => (
-                        <div key={user.id || user._id || index} className='flex items-center bg-gray-500 hover:bg-gray-600 rounded-md p-3 mb-2'>
-                            <h2 className='text-lg'>{user.fullName}</h2>
-                            <span className='w-3 h-3 rounded-full ml-2 bg-color-success'></span>
-                        </div>
-                    ))}
-                </div>
+  if (!mounted) return null; // ✅ Skip SSR rendering entirely
+
+  return (
+    <div className="w-screen h-[100dvh] flex overflow-hidden">
+      {/* Main content by state */}
+      {uiState === "loading" && <Loader />}
+      {uiState === "sessionStarted" && (
+        <ChatSide setUiState={setUiState} />
+      )}
+      {uiState === "accountSetup" && (
+        <AccountSetup setUiState={setUiState} />
+      )}
+      {uiState === "guestMode" && (
+        <GuestMode setUiState={setUiState} />
+      )}
+
+      {/* Sidebar with online users */}
+      <div className="hidden md:block md:flex-[1] max-w-[400px] border-l border-gray-500 bg-gray-900 flex flex-col overflow-y-auto">
+        <div className="w-full h-fit overflow-y-auto p-2">
+          <h1 className="text-xl text-gray-400 mb-1 font-medium">
+            Online users
+          </h1>
+          {loadingUsers && <p>Loading online users...</p>}
+          {!loadingUsers && onlineUsers.length === 0 && (
+            <p className="text-gray-400">Nobody is online</p>
+          )}
+          {onlineUsers.map((user, index) => (
+            <div
+              key={user.id || user._id || index}
+              className="flex items-center bg-gray-500 hover:bg-gray-600 rounded-md p-3 mb-2"
+            >
+              <h2 className="text-lg">{user.fullName}</h2>
+              <span className="w-3 h-3 rounded-full ml-2 bg-green-500"></span>
             </div>
+          ))}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default Page;

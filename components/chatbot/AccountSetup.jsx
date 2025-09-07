@@ -3,13 +3,11 @@ import React, { useState } from 'react';
 import Image from "next/image";
 import { CHATBOT_BACKEND_URL } from '@/utils/env';
 
-const AccountSetup = ({ setGuestMode, setAccountSetup }) => {
-    const router = useRouter();
+const AccountSetup = ({ setUiState }) => {
     const [loading, setLoading] = useState(false);
 
     const handleGuest = () => {
-        setGuestMode(true);
-        setAccountSetup(false);
+        setUiState("guestMode");
     };
 
     const handleGoogleLogin = () => {

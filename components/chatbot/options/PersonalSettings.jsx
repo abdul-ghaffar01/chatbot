@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import useChatStore from "@/store/chatStore";
 import { motion, AnimatePresence } from "framer-motion";
+import { CHATBOT_BACKEND_URL } from "@/utils/env";
 
 const PersonalSettings = () => {
     const { user } = useChatStore();
@@ -68,7 +69,7 @@ const PersonalSettings = () => {
                 ...(password && { password: password.trim() }),
             })
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL}/update-info`, {
+            const res = await fetch(`${CHATBOT_BACKEND_URL}/update-info`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

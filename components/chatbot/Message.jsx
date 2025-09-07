@@ -57,16 +57,16 @@ const Message = ({ message, showDate, formattedDate }) => {
                 initial={initialAnim}
                 animate={animateTo}
                 transition={{ duration: 0.4 }}
-                className={`${who === "user" ? "bg-color-500 self-end" : "bg-gray-500"} w-fit min-w-[150px] max-w-[80%] p-1 md:p-2 rounded-md m-1 text-color-light`}
+                className={`${who === "user" ? "bg-green-600 self-end" : "bg-gray-500"} w-fit min-w-[150px] max-w-[80%] p-1 md:p-2 rounded-md m-1 text-color-light`}
             >
                 <div className='font-semibold break-words whitespace-pre-wrap w-full'>
                     {formatContent(message.content)}
                 </div>
 
                 <div className='text-xs flex items-center justify-between mt-1'>
-                    <p className='text-color-light'>{who === 'user' ? "You" : who}</p>
+                    <p className='text-white'>{who === 'user' ? "You" : who}</p>
                     <div className='flex items-center gap-1'>
-                        <p className='text-color-light'>
+                        <p className='text-white'>
                             {new Date(message.sentAt).toLocaleTimeString('en-US', {
                                 hour: '2-digit',
                                 minute: '2-digit',

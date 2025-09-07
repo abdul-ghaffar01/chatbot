@@ -13,7 +13,7 @@ import Link from 'next/link';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ProtectedChatBot from './ProtectedChatBot';
 
-const ChatSide = ({ setSessionStarted, setAccountSetup }) => {
+const ChatSide = ({ setUiState }) => {
     const textareaRef = useRef(null);
     const endRef = useRef(null);
     const scrollRef = useRef(null);
@@ -139,8 +139,7 @@ const ChatSide = ({ setSessionStarted, setAccountSetup }) => {
         if (socket && socket.connected) {
             socket.disconnect(); // 🔌 Disconnect socket
             console.log("Socket disconnected on logout");
-            setSessionStarted(false)
-            setAccountSetup(true)
+            setUiState("accountSetup");
 
         }
         setLogoutLoading(false)
@@ -196,7 +195,7 @@ const ChatSide = ({ setSessionStarted, setAccountSetup }) => {
 
                         {/* Send message textarea and button */}
                         <div className='w-full bg-gray-900 pt-2 px-2'>
-                            <div className='w-full rounded-[30px] pl-5 h-fit max-w-screen p-2 bg-color-gray-700 shrink-0 relative'>
+                            <div className='w-full rounded-[30px] pl-5 h-fit max-w-screen p-2 bg-gray-700 shrink-0 relative'>
                                 <textarea
                                     onKeyDown={handleKeyDown}
                                     ref={textareaRef}

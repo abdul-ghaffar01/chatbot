@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import Logo from '../navbar/Logo';
 import decodeJWT from '@/utils/chatbot/decodeJwt';
+import { CHATBOT_BACKEND_URL } from '@/utils/env';
 
-const GuestMode = ({ setAccountSetup, setGuestMode, setSessionStarted }) => {
+const GuestMode = ({ setUiState }) => {
     const [creatingAccount, setCreatingAccount] = useState(false);
     const [respMessage, setRespMessage] = useState("");
 
     const createGuestAccount = async (who) => {
         setCreatingAccount(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_CHATBOT_BACKEND_URL}/signup-guest`, {
+            const res = await fetch(`${CHATBOT_BACKEND_URL}/signup-guest`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ who }),
@@ -22,8 +23,7 @@ const GuestMode = ({ setAccountSetup, setGuestMode, setSessionStarted }) => {
                 localStorage.setItem("jwt", data.token);
                 localStorage.setItem("user", JSON.stringify(payload));
                 setRespMessage(data.message || "Guest account created successfully!");
-                setSessionStarted(true);
-                setGuestMode(false);
+                setUiState("sessionStarted");
             } else {
                 setRespMessage(data.message || "Failed to create guest account.");
             }
@@ -36,8 +36,7 @@ const GuestMode = ({ setAccountSetup, setGuestMode, setSessionStarted }) => {
     };
 
     const handleBack = () => {
-        setAccountSetup(true);
-        setGuestMode(false);
+        setUiState("accountSetup");
     };
 
     return (
