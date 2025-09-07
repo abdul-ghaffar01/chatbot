@@ -12,7 +12,7 @@ const ProtectedChatBot = ({ children }) => {
         const token = localStorage.getItem("jwt");
 
         if (!token) {
-            router.replace("/chat");
+            router.replace("/");
             return;
         }
 
@@ -22,7 +22,7 @@ const ProtectedChatBot = ({ children }) => {
             // Check expiration
             if (!decoded) {
                 localStorage.removeItem("jwt");
-                router.replace("/chat");
+                router.replace("/");
                 return;
             }
 
@@ -30,7 +30,7 @@ const ProtectedChatBot = ({ children }) => {
             setIsAuthorized(true);
         } catch (error) {
             localStorage.removeItem("jwt");
-            router.replace("/chat");
+            router.replace("/");
         }
     }, [router]);
 

@@ -22,9 +22,10 @@ const Message = ({ message, showDate, formattedDate }) => {
     const variants = {
         fromLeft: { opacity: 0, x: -40 },
         fromRight: { opacity: 0, x: 40 },
+        fromBottom: { opacity: 0, y: 40, x:20 },
         fadeIn: { opacity: 0, scale: 0.9 },
     };
-    const animateTo = { opacity: 1, x: 0, scale: 1 };
+    const animateTo = { opacity: 1, x: 0, y: 0, scale: 1 };
 
     // Info/system messages
     if (who === "info") {
@@ -45,7 +46,7 @@ const Message = ({ message, showDate, formattedDate }) => {
         who.toLowerCase() === "abdul ghaffar" || who.toLowerCase() === "chatbot";
 
     const initialAnim = isUser
-        ? variants.fromRight
+        ? variants.fromBottom
         : isBot
             ? variants.fromLeft
             : variants.fadeIn;
@@ -89,12 +90,12 @@ const Message = ({ message, showDate, formattedDate }) => {
                                     // Gray / dim check for pending
                                     <Clock size={11} color="gray" />
                                 ) : (
-                                // Bright check for delivered
-                                <CheckIcon
-                                    className="text-blue-400"
-                                    sx={{ fontSize: "14px" }}
-                                    titleAccess="Delivered"
-                                />
+                                    // Bright check for delivered
+                                    <CheckIcon
+                                        className="text-blue-400"
+                                        sx={{ fontSize: "14px" }}
+                                        titleAccess="Delivered"
+                                    />
                                 )}
                             </div>
                         )}
