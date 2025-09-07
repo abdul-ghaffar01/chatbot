@@ -57,7 +57,7 @@ const page = () => {
                 <h2 className="text-2xl font-semibold text-gray-800 text-center mb-4">
                     Admin Login
                 </h2>
-                <form className="flex flex-col gap-4" onSubmit={handleLogin}>
+                <form className="text-gray-900 flex flex-col gap-4" onSubmit={handleLogin}>
                     <input
                         type="email"
                         placeholder="Email"
