@@ -1,4 +1,4 @@
-const ENVIRONMENT = 'PROD';
+const ENVIRONMENT = 'DEV';
 
 const CHATBOT_BACKEND_URL = ENVIRONMENT === "DEV" ? "http://localhost:3009" : "https://chatbot.iabdulghaffar.com";
 
