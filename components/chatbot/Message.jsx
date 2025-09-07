@@ -34,7 +34,7 @@ const Message = ({ message, showDate, formattedDate }) => {
                 initial={variants.fadeIn}
                 animate={animateTo}
                 transition={{ duration: 0.3 }}
-                className="text-center text-gray-400 italic my-3 text-xs"
+                className="text-center text-gray-400 my-3 text-xs"
             >
                 {message.content}
             </motion.p>
